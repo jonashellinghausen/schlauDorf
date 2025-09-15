@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 
 from flask import Blueprint, current_app, jsonify, request, send_file
+from sqlalchemy import func
+import json
 from werkzeug.utils import secure_filename
 
 from ..extensions import db
@@ -34,10 +36,33 @@ def allowed_file(filename: str) -> bool:
 
 @bp.get("/tracks")
 def list_tracks():
-    """Return public tracks."""
+    """Return public tracks with geometry and stats."""
 
-    tracks = GPXTrack.query.filter_by(is_public=True).all()
-    return jsonify([{ "id": t.id, "name": t.name } for t in tracks])
+    rows = (
+        db.session.execute(
+            db.select(
+                GPXTrack.id,
+                GPXTrack.name,
+                GPXTrack.distance_km,
+                GPXTrack.elevation_gain_m,
+                func.ST_AsGeoJSON(GPXTrack.track_data).label("geojson"),
+            ).filter_by(is_public=True)
+        ).mappings()
+    )
+
+    tracks = []
+    for row in rows:
+        geometry = json.loads(row["geojson"]) if row["geojson"] else None
+        track = {
+            "id": row["id"],
+            "name": row["name"],
+            "distance_km": float(row["distance_km"]) if row["distance_km"] is not None else None,
+            "elevation_gain_m": row["elevation_gain_m"],
+            "geometry": geometry,
+        }
+        tracks.append(track)
+
+    return jsonify(tracks)
 
 
 @bp.post("/upload")
