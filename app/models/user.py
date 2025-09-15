@@ -1,12 +1,21 @@
 from datetime import datetime
+import enum
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 from ..extensions import db, login_manager
 
 
+class Role(enum.Enum):
+    """Enumeration of possible user roles."""
+
+    USER = "user"
+    ADMIN = "admin"
+
+
 class User(UserMixin, db.Model):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -17,7 +26,8 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(20))
     address = db.Column(db.Text)
     is_verified = db.Column(db.Boolean, default=False)
-    is_admin = db.Column(db.Boolean, default=False)
+    verification_token = db.Column(db.String(120), unique=True, nullable=True)
+    role = db.Column(db.Enum(Role), default=Role.USER, nullable=False)
     avatar_filename = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
