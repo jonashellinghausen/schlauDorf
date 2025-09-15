@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_login import login_required, current_user
 
 from ..extensions import db
 from ..models import ChatRoom, ChatMessage
@@ -7,12 +8,14 @@ bp = Blueprint('chat', __name__, url_prefix='/api/chat')
 
 
 @bp.get('/rooms')
+@login_required
 def list_rooms():
     rooms = ChatRoom.query.all()
     return jsonify([{'id': r.id, 'name': r.name} for r in rooms])
 
 
 @bp.get('/rooms/<int:room_id>/messages')
+@login_required
 def get_messages(room_id: int):
     messages = (
         ChatMessage.query.filter_by(room_id=room_id)
@@ -31,14 +34,14 @@ def get_messages(room_id: int):
 
 
 @bp.post('/rooms/<int:room_id>/messages')
+@login_required
 def post_message(room_id: int):
     data = request.get_json() or {}
     message = data.get('message')
-    user_id = data.get('user_id')
-    if not message or user_id is None:
+    if not message:
         return jsonify({'error': 'Invalid payload'}), 400
 
-    chat_message = ChatMessage(room_id=room_id, user_id=user_id, message=message)
+    chat_message = ChatMessage(room_id=room_id, user_id=current_user.id, message=message)
     db.session.add(chat_message)
     db.session.commit()
 
