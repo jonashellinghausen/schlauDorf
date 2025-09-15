@@ -40,4 +40,7 @@ def create_app(config_class: type = Config) -> Flask:
     from .routes.api import bp as api_bp
     app.register_blueprint(api_bp)
 
+    # Import Socket.IO event handlers
+    from . import socket_events  # noqa: F401
+
     return app
