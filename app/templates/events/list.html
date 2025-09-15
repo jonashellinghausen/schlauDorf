@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <h1>Events</h1>
+  <div class="list-group">
+    {% for event in events %}
+    <div class="list-group-item">
+      <h5 class="mb-1">{{ event.title }}</h5>
+      {% if event.start_date %}<small class="text-muted">{{ event.start_date.strftime('%Y-%m-%d') }}</small>{% endif %}
+      <p class="mb-1">{{ event.description }}</p>
+    </div>
+    {% else %}
+    <p>No events available.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
