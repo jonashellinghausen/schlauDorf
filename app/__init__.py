@@ -22,6 +22,9 @@ def create_app(config_class: type = Config) -> Flask:
     from .routes.main import bp as main_bp
     app.register_blueprint(main_bp)
 
+    from .routes.legal import bp as legal_bp
+    app.register_blueprint(legal_bp)
+
     from .routes.auth import bp as auth_bp
     app.register_blueprint(auth_bp)
 
