@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Chat Room {{ room_id }}</h2>
+  <ul id="messages"></ul>
+  <form id="chat-form" class="mt-3">
+    <div class="input-group">
+      <input id="message-input" autocomplete="off" class="form-control" />
+      <button class="btn btn-primary" type="submit">Send</button>
+    </div>
+  </form>
+</div>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+  const roomId = {{ room_id }};
+  const socket = io();
+  socket.emit('join_room', {room: roomId});
+
+  function addMessage(text) {
+    const li = document.createElement('li');
+    li.textContent = text;
+    document.getElementById('messages').appendChild(li);
+  }
+
+  fetch(`/api/chat/rooms/${roomId}/messages`).then(r => r.json()).then(data => {
+    data.forEach(m => addMessage(m.message));
+  });
+
+  socket.on('receive_message', function(msg) {
+    if (msg.room_id === roomId) {
+      addMessage(msg.message);
+    }
+  });
+
+  document.getElementById('chat-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const text = document.getElementById('message-input').value;
+    if (text) {
+      socket.emit('send_message', {room_id: roomId, user_id: 1, message: text});
+      document.getElementById('message-input').value = '';
+    }
+  });
+</script>
+{% endblock %}
