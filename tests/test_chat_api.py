@@ -24,7 +24,8 @@ class ChatAPITestCase(unittest.TestCase):
             username='tester',
             email='tester@example.com',
             first_name='Test',
-            last_name='User'
+            last_name='User',
+            is_verified=True,
         )
         user.set_password('password')
         db.session.add(user)
@@ -40,6 +41,10 @@ class ChatAPITestCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_post_and_get_messages(self):
+        self.client.post(
+            '/auth/login',
+            data={'username': 'tester', 'password': 'password'},
+        )
         url = f'/api/chat/rooms/{self.room.id}/messages'
         response = self.client.post(url, json={'user_id': self.user.id, 'message': 'Hello'})
         self.assertEqual(response.status_code, 201)
