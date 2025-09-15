@@ -1,26 +1,20 @@
 import io
 import os
 import shutil
-import sqlite3
 import tempfile
 import unittest
 
+import sqlite3
 if not hasattr(sqlite3.Connection, "enable_load_extension"):
-    raise unittest.SkipTest("SQLite extension loading is not supported")
-
-from sqlalchemy import event
-from sqlalchemy.engine import Engine
+    try:
+        import pysqlite3 as sqlite3  # type: ignore
+    except Exception:
+        raise unittest.SkipTest("SQLite extension loading is not supported") from None
 
 from app import create_app
 from app.config import Config
 from app.extensions import db
 from app.models.gpx import GPXTrack
-
-
-@event.listens_for(Engine, "connect")
-def load_spatialite(dbapi_conn, connection_record):
-    dbapi_conn.enable_load_extension(True)
-    dbapi_conn.load_extension("mod_spatialite")
 
 
 class TestConfig(Config):
