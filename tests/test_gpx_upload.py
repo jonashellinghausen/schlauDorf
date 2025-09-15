@@ -73,7 +73,12 @@ class GPXUploadTestCase(unittest.TestCase):
         self.assertEqual(list_resp.status_code, 200)
         tracks = list_resp.get_json()
         self.assertEqual(len(tracks), 1)
-        self.assertEqual(tracks[0]['name'], 'Sample Track')
+        track_info = tracks[0]
+        self.assertEqual(track_info['name'], 'Sample Track')
+        # Geometry should be a GeoJSON LineString
+        self.assertEqual(track_info['geometry']['type'], 'LineString')
+        self.assertIsNotNone(track_info['distance_km'])
+        self.assertIsNotNone(track_info['elevation_gain_m'])
 
     def test_upload_invalid_extension(self):
         data = {
