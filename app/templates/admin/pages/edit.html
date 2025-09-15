@@ -1,0 +1,10 @@
+<!doctype html>
+<title>Edit Page</title>
+<h1>Edit Page</h1>
+<form method="post">
+  <p>Title: <input type="text" name="title" value="{{ page.title }}"></p>
+  <p>Slug: <input type="text" name="slug" value="{{ page.slug }}"></p>
+  <p>Content:</p>
+  <textarea name="content">{{ page.content }}</textarea>
+  <p><button type="submit">Save</button></p>
+</form>
