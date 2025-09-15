@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Tuple
 from flask import Blueprint, abort, jsonify, request
 from flask_login import current_user, login_required
 
-from ..models import ChatMessage, Event, News, Role, User
+from ..models import Event, News, Role, User
 
 bp = Blueprint("api", __name__, url_prefix="/api")
 
@@ -104,33 +104,6 @@ def list_events():
                     "location": event.location,
                 }
                 for event in items
-            ],
-            **meta,
-        }
-    )
-
-
-# ---------------------------------------------------------------------------
-# Chat message routes
-# ---------------------------------------------------------------------------
-
-@bp.get("/chat/<int:room_id>/messages")
-@login_required
-def list_chat_messages(room_id: int):
-    """Return chat messages for a room."""
-
-    query = ChatMessage.query.filter_by(room_id=room_id).order_by(ChatMessage.created_at.desc())
-    items, meta = paginate_query(query)
-    return jsonify(
-        {
-            "items": [
-                {
-                    "id": msg.id,
-                    "user_id": msg.user_id,
-                    "message": msg.message,
-                    "created_at": msg.created_at.isoformat(),
-                }
-                for msg in items
             ],
             **meta,
         }
