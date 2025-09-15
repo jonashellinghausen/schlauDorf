@@ -9,7 +9,7 @@ if command -v apt-get >/dev/null 2>&1; then
     PKG_CMD="sudo apt-get"
   fi
   $PKG_CMD update
-  $PKG_CMD install -y python3 python3-venv python3-dev build-essential libpq-dev libgdal-dev
+  $PKG_CMD install -y python3 python3-venv python3-dev build-essential libpq-dev libgdal-dev libsqlite3-mod-spatialite
 fi
 
 # Python virtual environment and dependencies
