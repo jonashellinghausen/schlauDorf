@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Map View</title>
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-o9N1jJyz+y6N0vPd/7nP3yR/4k+xI1NmedEy9hxeu94="
+        crossorigin=""
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/maps.css') }}" />
+</head>
+<body>
+    <div id="map"></div>
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-pEjM6XV50Tz3TKH1oWh05rq6ArtyTcwxH8333d3SOkc="
+        crossorigin=""
+    ></script>
+    <script src="{{ url_for('static', filename='js/maps.js') }}"></script>
+</body>
+</html>
