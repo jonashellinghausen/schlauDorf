@@ -1,4 +1,40 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container"><h1>Admin Dashboard</h1></div>
+<div class="container">
+  <h1>Admin Dashboard</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Verified</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+      <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ 'Yes' if user.is_verified else 'No' }}</td>
+        <td>
+          <span class="badge bg-primary">{{ user.role.value }}</span>
+        </td>
+        <td>
+          {% if not user.is_verified %}
+            <a href="{{ url_for('admin.verify_user', user_id=user.id) }}" class="btn btn-sm btn-success">Verify</a>
+          {% endif %}
+          {% for role in roles %}
+            {% if user.role != role %}
+              <a href="{{ url_for('admin.set_role', user_id=user.id, role=role.value) }}" class="btn btn-sm btn-secondary">{{ role.value }}</a>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}
+
