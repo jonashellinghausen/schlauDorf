@@ -1,0 +1,10 @@
+<!doctype html>
+<title>Event Form</title>
+<h1>Event</h1>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <p>{{ form.title.label }} {{ form.title() }}</p>
+  <p>{{ form.description.label }} {{ form.description() }}</p>
+  <p>{{ form.submit() }}</p>
+</form>
+<a href="{{ url_for('event.list_events') }}">Back to events</a>
