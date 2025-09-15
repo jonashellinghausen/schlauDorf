@@ -1,0 +1,13 @@
+<!doctype html>
+<title>{{ news.title }}</title>
+<h1>{{ news.title }}</h1>
+<p>{{ news.body }}</p>
+<p>Category: {{ news.category }}</p>
+{% if news.image_filename %}
+  <p>Image: {{ news.image_filename }}</p>
+{% endif %}
+<a href="{{ url_for('news.edit', news_id=news.id) }}">Edit</a>
+<form method="post" action="{{ url_for('news.delete', news_id=news.id) }}" style="display:inline">
+  <button type="submit">Delete</button>
+</form>
+<a href="{{ url_for('news.index') }}">Back</a>

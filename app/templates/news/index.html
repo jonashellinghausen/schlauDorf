@@ -1,0 +1,9 @@
+<!doctype html>
+<title>News</title>
+<h1>News</h1>
+<ul>
+  {% for item in news_list %}
+  <li><a href="{{ url_for('news.detail', news_id=item.id) }}">{{ item.title }}</a></li>
+  {% endfor %}
+</ul>
+<a href="{{ url_for('news.create') }}">Create News</a>

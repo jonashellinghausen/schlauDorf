@@ -1,0 +1,12 @@
+<!doctype html>
+<title>News Form</title>
+<h1>News Form</h1>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <p>{{ form.title.label }} {{ form.title(size=40) }}</p>
+  <p>{{ form.body.label }} {{ form.body(rows=5, cols=40) }}</p>
+  <p>{{ form.category.label }} {{ form.category(size=40) }}</p>
+  <p>{{ form.image_filename.label }} {{ form.image_filename(size=40) }}</p>
+  <p>{{ form.submit() }}</p>
+</form>
+<a href="{{ url_for('news.index') }}">Back</a>
