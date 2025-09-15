@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Chat Room</title>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <div id="messages"></div>
+    <input id="username" placeholder="Username" />
+    <input id="message" placeholder="Message" />
+    <button id="send">Send</button>
+
+    <script>
+    const room = 'general';
+    const socket = io();
+    socket.emit('join_room', {room: room});
+
+    const messagesDiv = document.getElementById('messages');
+    const usernameInput = document.getElementById('username');
+    const messageInput = document.getElementById('message');
+    const sendButton = document.getElementById('send');
+
+    function appendMessage(data) {
+        const p = document.createElement('p');
+        p.textContent = `${data.username}: ${data.message}`;
+        messagesDiv.appendChild(p);
+    }
+
+    fetch(`/api/chat/rooms/${room}/messages`)
+        .then(r => r.json())
+        .then(data => data.forEach(appendMessage));
+
+    sendButton.onclick = () => {
+        const username = usernameInput.value || 'Anonymous';
+        const message = messageInput.value;
+        socket.emit('send_message', {room: room, username: username, message: message});
+        messageInput.value = '';
+    };
+
+    socket.on('receive_message', appendMessage);
+    </script>
+</body>
+</html>
