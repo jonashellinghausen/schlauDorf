@@ -1,0 +1,36 @@
+<!doctype html>
+<title>Admin Dashboard</title>
+<h1>Dashboard</h1>
+<ul>
+  <li>Users: {{ statistics.users }}</li>
+  <li>News: {{ statistics.news }}</li>
+  <li>Events: {{ statistics.events }}</li>
+  <li>GPX Tracks: {{ statistics.tracks }}</li>
+</ul>
+
+<h2>Recent Users</h2>
+<ul>
+{% for u in recent_users %}
+  <li>{{ u }}</li>
+{% else %}
+  <li>No users found</li>
+{% endfor %}
+</ul>
+
+<h2>Recent News</h2>
+<ul>
+{% for n in recent_news %}
+  <li>{{ n }}</li>
+{% else %}
+  <li>No news found</li>
+{% endfor %}
+</ul>
+
+<h2>Recent Events</h2>
+<ul>
+{% for e in recent_events %}
+  <li>{{ e }}</li>
+{% else %}
+  <li>No events found</li>
+{% endfor %}
+</ul>

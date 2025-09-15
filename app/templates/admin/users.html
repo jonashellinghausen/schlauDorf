@@ -1,0 +1,14 @@
+<!doctype html>
+<title>Users</title>
+<h1>Users</h1>
+<ul>
+{% for user in users %}
+  <li>{{ user }}
+    <form method="post" action="{{ url_for('admin.verify_user', user_id=user.id) }}">
+      <button type="submit">Verify</button>
+    </form>
+  </li>
+{% else %}
+  <li>No users available</li>
+{% endfor %}
+</ul>
