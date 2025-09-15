@@ -34,8 +34,11 @@ def create_app(config_class: type = Config) -> Flask:
     from .routes.maps import bp as maps_bp
     app.register_blueprint(maps_bp)
 
-    from .routes.gpx import bp as gpx_bp
-    app.register_blueprint(gpx_bp)
+    try:  # GPX routes depend on spatial libraries
+        from .routes.gpx import bp as gpx_bp
+        app.register_blueprint(gpx_bp)
+    except Exception:  # pragma: no cover - optional dependency missing
+        pass
 
     from .routes.admin import bp as admin_bp
     app.register_blueprint(admin_bp)
