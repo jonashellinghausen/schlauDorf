@@ -1,9 +1,8 @@
 from app import create_app
-from app.extensions import socketio, db
+from app.extensions import socketio
 
 app = create_app()
-with app.app_context():
-    db.create_all()
+
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=app.config.get('DEBUG', False))
