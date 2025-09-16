@@ -1,13 +1,38 @@
-from flask import Flask
+import os
 
-from .config import Config
+from flask import Flask
+from werkzeug.utils import import_string
+
+from .config import CONFIG_MAPPINGS, Config
 from .extensions import db, migrate, login_manager, socketio, csrf
 
 
-def create_app(config_class: type = Config) -> Flask:
+def _load_config_from_string(config_name: str):
+    config_class = CONFIG_MAPPINGS.get(config_name)
+    if config_class is not None:
+        return config_class
+    return import_string(config_name)
+
+
+def _resolve_config_class(config_class):
+    if config_class is None:
+        config_name = os.environ.get("FLASK_CONFIG")
+        if not config_name:
+            return Config
+        return _load_config_from_string(config_name)
+    if isinstance(config_class, str):
+        return _load_config_from_string(config_class)
+    return config_class
+
+
+def create_app(config_class=None) -> Flask:
     """Application factory for the schlauDorf project."""
+    resolved_config = _resolve_config_class(config_class)
+
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(resolved_config)
+    if hasattr(resolved_config, "init_app"):
+        resolved_config.init_app(app)
 
     # Initialise extensions
     db.init_app(app)
