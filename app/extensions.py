@@ -7,13 +7,21 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 import sys
 
-try:  # pragma: no cover - pysqlite fallback
-    import sqlite3
-    if not hasattr(sqlite3.Connection, "enable_load_extension"):
-        raise ImportError
-except Exception:  # pragma: no cover - default to pysqlite3
-    import pysqlite3 as sqlite3  # type: ignore
-    sys.modules["sqlite3"] = sqlite3
+try:  # pragma: no cover - prefer stdlib sqlite
+    import sqlite3 as _sqlite3
+except Exception:  # pragma: no cover - stdlib sqlite missing
+    _sqlite3 = None
+
+sqlite3 = _sqlite3
+if sqlite3 is None or not hasattr(sqlite3.Connection, "enable_load_extension"):
+    try:  # pragma: no cover - optional pysqlite fallback
+        import pysqlite3 as sqlite3  # type: ignore
+    except ImportError:  # pragma: no cover - fall back to stdlib even without extensions
+        if _sqlite3 is None:  # pragma: no cover - both modules missing
+            raise
+        sqlite3 = _sqlite3
+    else:
+        sys.modules["sqlite3"] = sqlite3
 
 # Initialize extensions without app for factory pattern
 
@@ -29,5 +37,8 @@ if hasattr(sqlite3.Connection, "enable_load_extension"):
     @event.listens_for(Engine, "connect")
     def load_spatialite(dbapi_conn, connection_record):  # pragma: no cover - optional dependency
         if isinstance(dbapi_conn, sqlite3.Connection):
-            dbapi_conn.enable_load_extension(True)
-            dbapi_conn.load_extension("mod_spatialite")
+            try:
+                dbapi_conn.enable_load_extension(True)
+                dbapi_conn.load_extension("mod_spatialite")
+            except Exception:  # pragma: no cover - extension unavailable
+                pass
